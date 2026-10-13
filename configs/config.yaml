@@ -1,0 +1,40 @@
+# Column names under `data` are PLACEHOLDERS. Confirm them in Phase 1
+# after inspecting the actual AMLSim files.
+project:
+  name: fintrace
+  seed: 42
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  duckdb_path: data/processed/fintrace.duckdb
+  sql_dir: sql
+
+data:
+  dataset: amlsim
+  time_column: tran_timestamp
+  label_column: is_sar
+
+# Temporal split by time quantile. No random splits.
+split:
+  method: temporal
+  train_frac: 0.6
+  val_frac: 0.2
+  test_frac: 0.2
+
+features:
+  lookback_windows_days: [1, 7, 30]
+
+graph:
+  # Every graph feature is computed only from transactions
+  # strictly before the prediction time.
+  as_of_rule: strictly_before_prediction_time
+
+metrics:
+  primary: pr_auc
+  precision_at_k: [50, 100, 500]
+
+agent:
+  max_tool_calls: 15
+  never_declare_guilt: true
+  verifier_required: true
