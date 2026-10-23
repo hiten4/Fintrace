@@ -43,11 +43,12 @@ positive. The tail stays in the database but is never used for PR-AUC or Precisi
 reported separately. No absolute-time feature (day or date) is allowed, because "late" would
 predict laundering. Hour-of-day is allowed.
 
-**D5. Node ID = (bank_id, account). Provisional until `check_node_ids` passes.**
+**D5. Node ID = (bank_id, account). Final.**
 8 account numbers appear under two different banks and entities, so the account number alone
-would merge different accounts. Bank IDs are normalized by stripping leading zeros before
-joining, because the transactions file uses `010` where the accounts file may use `10`.
-
+would merge different accounts. Bank IDs are normalized by stripping leading zeros (`0027755` ->
+`27755`) before joining. Verified with `check_node_ids`: 0 duplicate (bank, account) pairs in
+accounts, 0 orphan sources, 0 orphan destinations. About 50 transactions use an ambiguous
+account number as sender, so the effect is small but real.
 **D6. Self-transfers. Final.**
 591,212 rows (11.6%); 481,056 are Reinvestment with 0 positives. 11 ACH self-transfers are
 positive. They are excluded from graph edges because they carry no flow between accounts and
